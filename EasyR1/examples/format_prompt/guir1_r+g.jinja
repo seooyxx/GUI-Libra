@@ -1,0 +1,12 @@
+<image>{{ content | trim }}
+
+The response should be structured in the following format, make sure the output between <answer> and </answer> is a valid JSON object. Regarding the key "point_2d", please provide the coordinates on the screen where the action is to be performed; if not applicable, use [-100, -100]:
+<think> Your step-by-step thought process here... </think>
+<answer>
+{
+  "action_description": "the description of the action to perform, summarized in one sentence",
+  "action_type": "the type of action to perform. Please follow the system prompt for available actions.",
+  "value": "the input text or direction ('up', 'down', 'left', 'right') for the 'scroll' action, if applicable; otherwise, use 'None'",
+  "point_2d": [x, y]
+}
+</answer>
