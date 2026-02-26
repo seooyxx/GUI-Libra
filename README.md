@@ -1,23 +1,32 @@
 <p align="center">
-  <img src="images/logo.png" width="400" alt="GUI-Libra Logo">
+  <img src="images/logo.png" width="300" alt="GUI-Libra Logo">
 </p>
 
-<h1 align="center">GUI-Libra</h1>
 
 <p align="center">
-  <strong>Training Native GUI Agents to Reason and Act with Action-aware Supervision and Partially Verifiable RL</strong>
-</p>
-
-<p align="center">
-  <a href="https://gui-libra.github.io/">Project Page</a> &bull;
-  <a href="https://gui-libra.github.io/">Paper</a> &bull;
-  <a href="https://github.com/GUI-Libra/GUI-Libra">Code</a> &bull;
-  Models &bull;
-  Dataset
+  <strong>GUI-Libra: Training Native GUI Agents to Reason and Act with Action-aware Supervision and Partially Verifiable RL</strong>
 </p>
 
 <p align="center">
-  Rui Yang<sup>1</sup>, Qianhui Wu<sup>2</sup>, Zhaoyang Wang<sup>3</sup>, Hanyang Chen<sup>1</sup>, Ke Yang<sup>1</sup>, Hao Cheng<sup>2</sup>, Huaxiu Yao<sup>3</sup>, Baolin Peng<sup>2</sup>, Huan Zhang<sup>1</sup>, Jianfeng Gao<sup>2</sup>, Tong Zhang<sup>1</sup>
+  <a href="https://gui-libra.github.io/"><img src="https://img.shields.io/badge/🌐_Project_Page-blue" alt="Project Page"></a>
+  <a href="https://gui-libra.github.io/"><img src="https://img.shields.io/badge/📄_Paper-red" alt="Paper"></a>
+  <a href="https://github.com/GUI-Libra/GUI-Libra"><img src="https://img.shields.io/badge/💻_Code-green" alt="Code"></a>
+  <a href="https://huggingface.co/GUI-Libra"><img src="https://img.shields.io/badge/🤗_Models-yellow" alt="Models&Datasets"></a>
+</p>
+
+<p align="center">
+  <a href="https://yangrui2015.github.io/">Rui Yang</a><sup>1</sup>,
+  <a href="https://qianhuiwu.github.io/">Qianhui Wu</a><sup>2</sup>,
+  <a href="https://zhaoyang.win/">Zhaoyang Wang</a><sup>3</sup>,
+  <a href="https://jeremy-chy.github.io/">Hanyang Chen</a><sup>1</sup>,
+  <a href="https://empathyang.github.io/">Ke Yang</a><sup>1</sup>,
+  <a href="https://sites.google.com/site/hcheng2site/Home">Hao Cheng</a><sup>2</sup>,
+  <br>
+  <a href="https://www.huaxiuyao.io/">Huaxiu Yao</a><sup>3</sup>,
+  <a href="https://scholar.google.com/citations?user=u1CNjgwAAAAJ&hl=zh-CN">Baolin Peng</a><sup>2</sup>,
+  <a href="https://www.huan-zhang.com/">Huan Zhang</a><sup>1</sup>,
+  <a href="https://www.microsoft.com/en-us/research/people/jfgao/">Jianfeng Gao</a><sup>2</sup>,
+  <a href="https://tongzhang-ml.org/">Tong Zhang</a><sup>1</sup>
   <br>
   <sup>1</sup>UIUC &nbsp; <sup>2</sup>Microsoft &nbsp; <sup>3</sup>UNC-Chapel Hill
 </p>
