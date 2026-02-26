@@ -46,7 +46,7 @@ GUI-Libra tackles these with a tailored recipe:
 
 ## To Do List
 
-- [x] Release training code (SFT + RL)
+- [x] Release training code (SFT + RL, supporting both Qwen2.5-VL and Qwen3-VL models)
 - [x] Release evaluation code (WebArena-Lite-v2, Online-Mind2Web)
 - [x] Release GUI-Libra-81K dataset
 - [x] Release model checkpoints (GUI-Libra-3B/4B/7B/8B)
@@ -64,16 +64,10 @@ Base VLM ──► Action-Aware SFT (ASFT) ──► Conservative RL (GRPO) ─�
 
 ### Stage 1: Action-Aware Supervised Fine-Tuning
 
-- **Mixed supervision**: trains on both reasoning-then-action and direct-action data
-- **Token reweighting**: assigns higher weights to action and grounding tokens, reducing grounding degradation caused by long CoT
-- **Supported models**: Qwen2.5-VL (3B/7B), Qwen3-VL (4B/8B)
 
 See [`SFT/README_SFT.md`](SFT/README_SFT.md) for full training instructions.
 
 ### Stage 2: Reinforcement Learning with Partial Verifiable Rewards
-
-- **GRPO with KL regularization**: constrains policy drift under reward ambiguity, improving offline-to-online predictability
-- **Success-adaptive negative gradient scaling**: downweights unreliable negative gradients from ambiguously "wrong" actions
 
 See [`EasyR1/README_GUI_RL.md`](EasyR1/README_GUI_RL.md) for full RL training instructions.
 
@@ -190,6 +184,8 @@ and planning the next action...
 }
 </answer>
 ```
+> [!NOTE]
+> We use `<thinking></thinking>` for Qwen3-based models instead of `<think></think>`.
 
 Supported action types: `Click`, `Write`, `Terminate`, `Swipe`, `Scroll`, `NavigateHome`, `Answer`, `Wait`, `OpenAPP`, `NavigateBack`, `KeyboardPress`, `LongPress`, `Select`.
 
