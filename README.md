@@ -67,11 +67,11 @@ Base VLM ──► Action-Aware SFT (ASFT) ──► Conservative RL (GRPO) ─�
 ### Stage 1: Action-Aware Supervised Fine-Tuning
 
 
-See [`SFT/README_SFT.md`](SFT/README_SFT.md) for full training instructions.
+See [`SFT/README.md`](SFT/README.md) for full training instructions.
 
 ### Stage 2: Reinforcement Learning with Partial Verifiable Rewards
 
-See [`EasyR1/README_GUI_RL.md`](EasyR1/README_GUI_RL.md) for full RL training instructions.
+See [`EasyR1/README.md`](EasyR1/README.md) for full RL training instructions.
 
 ## Project Structure
 
@@ -84,7 +84,7 @@ GUI-Libra/
 │   │   ├── train_qwen2_5.sh      # Qwen2.5-VL (3B/7B)
 │   │   └── train_qwen3.sh        # Qwen3-VL (4B/8B)
 │   ├── data/                     # Data config YAMLs
-│   └── README_SFT.md             # SFT documentation
+│   └── README.md                  # SFT documentation
 │
 ├── EasyR1/                       # Reinforcement learning (based on EasyR1/veRL)
 │   ├── verl/                     # RL training framework
@@ -92,7 +92,7 @@ GUI-Libra/
 │   │   ├── gui_grpo.sh           # Qwen2.5-VL GRPO training
 │   │   ├── gui_grpo_qwen3.sh     # Qwen3-VL GRPO training
 │   │   ├── reward_function/      # GUI reward functions
-│   │   └── README_GUI_RL.md      # RL documentation
+│   │   └── README.md             # RL documentation
 │   └── README.md                 # EasyR1 framework docs
 │
 ├── evaluation/                   # Evaluation benchmarks

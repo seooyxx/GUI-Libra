@@ -1,124 +1,170 @@
-# AGUVIS
+# SFT Training
 
-<p align="center">
-        📑 <a  href="https://huggingface.co/papers/2412.04454" target="_blank">Paper</a> &nbsp&nbsp  </a> | &nbsp&nbsp 🌐 <a href="https://aguvis-project.github.io/" target="_blank">Project Page</a> &nbsp&nbsp | &nbsp&nbsp 💾 <a href="https://huggingface.co/collections/ranpox/aguvis-unified-pure-vision-gui-agents-6764e2bc343c62af95c209d8" target="_blank"> AGUVIS Data Collection</a> &nbsp&nbsp
-<br>
+This directory contains the code for action-aware supervised fine-tuning (SFT) of GUI agents based on Qwen2.5-VL and Qwen3-VL.
 
-<p align="center">
-    <img src="https://aguvis-project.github.io/static/images/overview.jpg" type="image/jpg"/>
-<p>
+## Supported Models
 
-## Introduction
+| Model | Script | Sizes |
+|-------|--------|-------|
+| Qwen2.5-VL | `scripts/train_qwen2_5.sh` | 3B, 7B |
+| Qwen3-VL | `scripts/train_qwen3.sh` | 4B, 8B |
 
-AGUVIS is a unified pure vision-based framework for autonomous GUI agents that can operate across various platforms (web, desktop, mobile). Unlike previous approaches that rely on textual representations, AGUVIS leverages unified purely vision-based observations and a consistent action space to ensure better generalization across different platforms.
+## Installation
 
-### Key Features & Contributions
-
-- 🔍 **Pure Vision Framework**: First fully autonomous pure vision GUI agent capable of performing tasks independently without relying on closed-source models
-- 🔄 **Cross-Platform Unification**: Unified action space and plugin system that works consistently across different GUI environments
-- 📊 **Comprehensive Dataset**: Large-scale dataset of GUI agent trajectories with multimodal grounding and reasoning
-- 🧠 **Two-Stage Training**: Novel training pipeline focusing on GUI grounding followed by planning and reasoning
-- 💭 **Inner Monologue**: Explicit planning and reasoning capabilities integrated into the model training
-
-Our framework demonstrates state-of-the-art performance in both offline and real-world online scenarios, offering a more efficient and generalizable approach to GUI automation.
-
-https://github.com/user-attachments/assets/83f2c281-961c-4e2d-90dd-8cb1857adfb6
-
-### Mobile Tasks (Android World)
-
-https://github.com/user-attachments/assets/9a0147b2-e966-4500-8494-8e64d4b1b890
-
-### Web Browsing Tasks (Mind2Web-Live)
-
-https://github.com/user-attachments/assets/f78b2263-5145-4ada-9556-a3173eb71144
-
-### Computer-use Tasks (OSWorld)
-
-https://github.com/user-attachments/assets/d1083c7d-992b-4cf4-8b07-3c9065821179
-
-## Getting Started
-
-### Installation
-
-1. Clone the repository:
 ```bash
-git clone git@github.com:xlang-ai/aguvis.git
-cd aguvis
+bash setup.sh
 ```
 
-2. Create and activate a conda environment:
+## Data Preparation
+
+### 1. Download the Dataset
+
+Clone the [GUI-Libra-81K-SFT](https://huggingface.co/datasets/GUI-Libra/GUI-Libra-81K-SFT) dataset from Hugging Face:
+
 ```bash
-conda create -n aguvis python=3.10
-conda activate aguvis
+git lfs install
+git clone https://huggingface.co/datasets/GUI-Libra/GUI-Libra-81K-SFT
+cd GUI-Libra-81K-SFT
 ```
 
-3. Install PyTorch and dependencies:
+After cloning, you will see:
+- `data/annotations/` — JSON annotation files
+- `data/images/` — split image archives (`*.tar.gz.part-*`)
+
+### 2. Merge and Extract Images
+
+The image archives are split into parts and need to be merged before extraction:
+
 ```bash
-conda install pytorch torchvision torchaudio pytorch-cuda -c pytorch -c nvidia
-pip install -e .
+cd data/images
+mkdir -p ../images_extracted
+
+# Merge split parts and extract
+for base in $(ls *.tar.gz.part-* | sed -E 's/\.part-[0-9]+$//' | sort -u); do
+  name="${base%.tar.gz}"
+  echo "[MERGE + EXTRACT] ${base}.part-* -> ../images_extracted/${name}"
+  cat "${base}".part-* | tar -xzf - -C ../images_extracted/
+done
 ```
 
-### Data Preparation
+To extract only a specific subset (e.g., `gui-odyssey`):
 
-1. **Stage 1: Grounding**
-   - Download the dataset from [aguvis-stage1](https://huggingface.co/datasets/xlangai/aguvis-stage1)
-   - Place the data according to the structure defined in [`data/stage1.yaml`](./data/stage1.yaml)
-
-2. **Stage 2: Planning and Reasoning**
-   - Download the dataset from [aguvis-stage2](https://huggingface.co/datasets/xlangai/aguvis-stage2)
-   - Place the data according to the structure defined in [`data/stage2.yaml`](./data/stage2.yaml)
-
-### Training
-
-1. Configure your training settings:
-   - Open `scripts/train.sh`
-   - Set the `SFT_TASK` variable to specify your training stage
-
-2. Start training:
 ```bash
-bash scripts/train.sh
+cat gui-odyssey.tar.gz.part-* | tar -xzf - -C ../images_extracted/
 ```
 
-### Model Checkpoints
+### 3. Place Data Under the SFT Directory
 
-- Aguvis-7B-720P: [Hugging Face](https://huggingface.co/xlangai/Aguvis-7B-720P)
-- Cooking... 🧑‍🍳
+Copy or symlink the downloaded data into the SFT directory:
 
-### Inference
-
-1. Configure your inference settings:
-   - Open `scripts/inference.sh`
-   - Set the `MODEL_PATH` variable to specify your model path
-   - Set the `IMAGE_PATH` variable to specify your image path
-   - Set the `INSTRUCTION` variable to specify your instruction
-   - Set the `PREVIOUS_ACTIONS` variable to specify your previous actions or leave it empty
-   - Set the `LOW_LEVEL_INSTRUCTION` variable to specify your low-level instruction or leave it empty
-
-2. Start inference:
 ```bash
-bash scripts/inference.sh
+# Assuming you are in the GUI-Libra/SFT directory
+# Option 1: Symlink (recommended, saves disk space)
+ln -s /path/to/Libra-81K-SFT/data/annotations ./data/annotations
+ln -s /path/to/Libra-81K-SFT/data/images_extracted ./data/images
+
+# Option 2: Copy
+cp -r /path/to/Libra-81K-SFT/data/annotations ./data/annotations
+cp -r /path/to/Libra-81K-SFT/data/images_extracted ./data/images
 ```
 
-## Checklist
+The expected directory structure under `SFT/`:
 
-- **Data**
-  - ✅ Stage 1: Grounding Dataset
-  - ✅ Stage 2: Planning and Reasoning Trajectories
-- **Code**
-  - ✅ Training Pipeline
-  - 🚧 Model Weights and Configurations
-  - 🚧 Inference Scripts
-  - 🚧 Evaluation Toolkit
-
-## Citation
-
-If this work is helpful, please kindly cite as:
-
-```bibtex
-@article{xu2024aguvis,
-  title={Aguvis: Unified Pure Vision Agents for Autonomous GUI Interaction},
-  author={Yiheng Xu and Zekun Wang and Junli Wang and Dunjie Lu and Tianbao Xie and Amrita Saha and Doyen Sahoo and Tao Yu and Caiming Xiong},
-  year={2024},
-  url={https://arxiv.org/abs/2412.04454}
-}
 ```
+SFT/
+├── data/
+│   ├── annotations/                              # JSON annotation files
+│   │   ├── mind2web-reasoning_and_grounding_changecoord.json
+│   │   ├── guiact-web-reasoning_and_grounding_changecoord.json
+│   │   ├── guiact-web-chinese-reasoning_and_grounding_changecoord.json
+│   │   ├── coat-terminal-reasoning_and_grounding_changecoord.json
+│   │   ├── amex-reasoning_and_grounding_changecoord.json
+│   │   ├── aitw-reasoning_and_grounding_changecoord.json
+│   │   ├── android_control-reasoning_and_grounding_changecoord.json
+│   │   ├── gui-odyssey-reasoning_and_grounding_changecoord.json
+│   │   └── ... (noreason variants, _1000 variants for Qwen3)
+│   ├── images/                                    # Extracted image folders
+│   │   ├── mind2web/
+│   │   ├── guiact-web-multi-v2/images/
+│   │   ├── guiact-web-multi-v2-chinese/images/
+│   │   ├── android_in_the_zoo/train/
+│   │   ├── amex/images/
+│   │   ├── aitw-v1/images/
+│   │   ├── android_control/images/
+│   │   └── gui-odyssey/images/
+│   ├── reasoning_and_grounding_changecoord.yaml
+│   ├── reasoning_and_grounding_changecoord_mixnoreasoning.yaml
+│   └── reasoning_and_grounding_changecoord_mixnoreasoning_qwen3.yaml
+├── scripts/
+│   ├── train_qwen2_5.sh
+│   └── train_qwen3.sh
+└── ...
+```
+
+## Training
+
+### Configuration
+
+Before running, edit the training script to adjust:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `llm_index` | Model size index (Qwen2.5-VL: 0=3B, 1=7B; Qwen3-VL: 0=4B, 1=8B) | `0` |
+| `IMAGE_FOLDER` | Path to the extracted images directory | `./data/images` |
+| `DATA_ROOT` | Root path for annotation files (env variable used in YAML configs) | — |
+| `use_action_weight` | Enable action-aware token weighting | `True` (Qwen2.5-VL) / `False` (Qwen3-VL) |
+| `action_weight` | Weight multiplier for action tokens | `2.0` |
+| `--num_processes` | Number of GPUs | `8` |
+
+### Run Qwen2.5-VL SFT
+
+```bash
+cd SFT
+
+# Set DATA_ROOT to where annotations are stored
+# If you symlinked annotations to ./data/annotations, use:
+export DATA_ROOT=./data
+
+bash scripts/train_qwen2_5.sh
+```
+
+The script trains on two modes by default:
+- `reasoning_and_grounding_changecoord_mixnoreasoning` — mixed reasoning + direct-action data (1 epoch)
+- `reasoning_and_grounding_changecoord` — reasoning-only data (2 epochs, automatically doubled to match training steps)
+
+### Run Qwen3-VL SFT
+
+```bash
+cd SFT
+export DATA_ROOT=./data
+
+bash scripts/train_qwen3.sh
+```
+
+This trains on `reasoning_and_grounding_changecoord_mixnoreasoning_qwen3` mode with coordinates in [0, 1000] format.
+
+### Output
+
+Checkpoints are saved to `checkpoints/<run_name>/`, with a checkpoint saved every 100 steps (max 5 retained).
+
+## Key Training Parameters
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `per_device_train_batch_size` | 4 | Batch size per GPU |
+| `gradient_accumulation_steps` | 8 | Gradient accumulation |
+| `learning_rate` | 1e-5 | Learning rate |
+| `model_max_length` | 24576 | Max sequence length |
+| `freeze_visual_encoder` | False | Train the vision encoder |
+| `attn_implementation` | flash_attention_2 | Attention backend |
+
+## Multi-Node Training
+
+For multi-node setups, set the following environment variables before launching:
+
+```bash
+export MASTER_ADDR=<master-node-ip>
+export MASTER_PORT=29504
+```
+
+And configure `RANK`, `WORLD_SIZE` via `accelerate config` or environment variables on each node.
