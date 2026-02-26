@@ -35,13 +35,17 @@
 
 ## Overview
 
-Open-source native GUI agents have made rapid progress in visual grounding and low-level action execution, yet they still lag behind closed-source systems on long-horizon navigation tasks that demand both high-level reasoning and precise actions. **GUI-Libra** addresses two key limitations: (1) the scarcity of high-quality, action-aligned reasoning data, and (2) the direct adoption of generic post-training pipelines that overlook challenges unique to GUI agents.
+**GUI-Libra** is a post-training framework that turns open-source VLMs into strong native GUI agents — models that see a screenshot, think step-by-step, and output an executable action, all within a single forward pass.
 
+We find that naively adding chain-of-thought (CoT) to GUI agents *hurts* grounding accuracy, and that standard RLVR struggles because GUI rewards are only *partially* verifiable. GUI-Libra solves both:
 
-GUI-Libra tackles these with a tailored recipe:
-1. **81K Curated Dataset** — action-aligned reasoning data with agreement filtering and coordinate verification
-2. **Action-Aware SFT (ASFT)** — mixed reasoning/direct-action supervision with token-level reweighting to preserve grounding under long CoT
-3. **Conservative RL** — KL-regularized GRPO with success-adaptive negative gradient scaling for stable training under partial verifiability
+| Component | What it does |
+|-----------|-------------|
+| **GUI-Libra-81K** | 81K-step reasoning dataset with action re-prediction filtering and bounding-box coordinate verification |
+| **Action-Aware SFT** | Mixes reasoning and direct-action data; reweights tokens so the model doesn't forget *where to click* while learning *why to click* |
+| **Conservative RL** | KL-regularized GRPO that stays stable under ambiguous rewards, with success-adaptive scaling to tame noisy negative gradients |
+
+The result: **GUI-Libra-4B/8B match or outperform GPT-4o and 72B models** on AndroidWorld, WebArena-Lite-v2, and Online-Mind2Web — without any online data collection.
 
 
 ## To Do List
