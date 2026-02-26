@@ -52,8 +52,8 @@ The result: **GUI-Libra-4B/8B match or outperform GPT-4o and 72B models** on And
 - [x] Release evaluation code (WebArena-Lite-v2, Online-Mind2Web)
 - [x] Release GUI-Libra-81K dataset
 - [x] Release model checkpoints (GUI-Libra-3B/4B/7B/8B)
+- [x] AndroidWorld evaluation code
 - [ ] Offline evaluation code (MM-Mind2Web, AndroidControl, ScreenSpot-v2)
-- [ ] AndroidWorld evaluation code
 
 
 ## Training Pipeline
@@ -97,7 +97,8 @@ GUI-Libra/
 │
 ├── evaluation/                   # Evaluation benchmarks
 │   ├── WebArenaLiteV2/           # WebArena-Lite-v2 evaluation
-│   └── online-mind2web-eval/     # Online-Mind2Web evaluation
+│   ├── online-mind2web-eval/     # Online-Mind2Web evaluation
+│   └── android_world_seeact_v/   # AndroidWorld evaluation
 │
 └── images/                       # Project assets
 ```
@@ -164,6 +165,18 @@ python run.py \
     --gpt.openai_api_base http://localhost:20001/v1 \
     --num_processes 4
 ```
+
+#### AndroidWorld
+
+```bash
+cd evaluation/android_world_seeact_v
+# Launch 15 Android emulators via Docker
+docker compose up -d
+# Serve model via vLLM, then edit run.sh and run:
+bash run.sh
+```
+
+See [`evaluation/android_world_seeact_v/README.md`](evaluation/android_world_seeact_v/README.md) for detailed setup instructions.
 
 ## Data Format
 
