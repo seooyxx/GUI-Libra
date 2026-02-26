@@ -1,11 +1,9 @@
 <p align="center">
-  <img src="images/logo.png" width="300" alt="GUI-Libra Logo">
+  <img src="images/logo.png" width="200" alt="GUI-Libra Logo">
 </p>
 
 
-<p align="center">
-  <strong>GUI-Libra: Training Native GUI Agents to Reason and Act with Action-aware Supervision and Partially Verifiable RL</strong>
-</p>
+<h2 align="center">GUI-Libra: Training Native GUI Agents to Reason and Act<br>with Action-aware Supervision and Partially Verifiable RL</h2>
 
 <p align="center">
   <a href="https://gui-libra.github.io/"><img src="https://img.shields.io/badge/🌐_Project_Page-blue" alt="Project Page"></a>
