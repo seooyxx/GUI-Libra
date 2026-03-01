@@ -140,6 +140,11 @@ def get_args():
         default="android_world",
         help="Suite reinitialize: task_family.",
     )
+    parser.add_argument(
+        "--no_guidance",
+        action='store_true',
+        help='Whether to add guidance to the prompt.'
+    )
 
     return parser.parse_args()
 
@@ -244,7 +249,7 @@ class AndroidEnvClient:
 # ---------- Core eval routines ---------- 
 
 
-def build_agent(client: AndroidEnvClient, model_name: str, temperature: float, base_url: str, file_logger: logging.Logger | None = None, save_img_dir: str | None=None):
+def build_agent(client: AndroidEnvClient, model_name: str, temperature: float, base_url: str, no_guidance=False, file_logger: logging.Logger | None = None, save_img_dir: str | None=None):
     # Reuse original branching
     if 'ray2333' in model_name.lower() or 'gui-libra' in model_name.lower():
         # no grounding model for this
@@ -253,6 +258,7 @@ def build_agent(client: AndroidEnvClient, model_name: str, temperature: float, b
             infer.Gpt4Wrapper(model_name, temperature=temperature, base_url=base_url),
             file_logger=file_logger,
             save_img_dir=save_img_dir,
+            no_guidance=no_guidance,
         )
     elif 'qwen' in model_name.lower():
         if 'step-summary' in model_name.lower():
@@ -397,6 +403,7 @@ def worker_run(env_url: str,
                output_dir: str,
                save_img_dir: str,
                base_url: str,
+               no_guidance: bool,
                suite_reinit_args: Tuple[int, int, str]) -> Dict[str, Any]:
     """
     Runs a shard of (task_name, idx) on a single environment URL.
@@ -431,7 +438,7 @@ def worker_run(env_url: str,
     )
     file_logger.info(f"Reinitialized suite: {re}")
 
-    agent = build_agent(client, model_name, temperature=temperature, file_logger=file_logger, save_img_dir=save_img_dir, base_url=base_url)
+    agent = build_agent(client, model_name, temperature=temperature, file_logger=file_logger, no_guidance=no_guidance, save_img_dir=save_img_dir, base_url=base_url)
 
     completed = 0
     success = 0
@@ -543,6 +550,7 @@ def main():
                 max_steps=args.max_steps,
                 output_dir=args.output_path,
                 save_img_dir=args.save_img_dir,
+                no_guidance=args.no_guidance,
                 suite_reinit_args=suite_reinit_args,
                 base_url=base_urls_for_workers[i],
             )

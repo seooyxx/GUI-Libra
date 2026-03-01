@@ -26,10 +26,14 @@ echo "Model Name: ${model_name}"
 echo "Output Path: ${output_path}"
 echo "Hosts: ${HOSTS[@]}"
 
+
+# add --no_guidance when using GUI-Libra/GUI-Libra-3B or Ray2333/GUI-Libra-3B since small model does not work well with long guidance, otherwise keeping using guidance
 python run_suite_on_docker_mp.py \
     --env_urls ${URLS_JOINED} \
     --num_workers 15 --model ${model_name} --max_steps 20 --temperature 0.0 \
     --save_img_dir ${save_img_dir} --output_path ${output_path} --base_url ${base_url}
+
+
 
 echo "Model Name: ${model_name}"
 echo "Output Path: ${output_path}"

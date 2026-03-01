@@ -107,6 +107,11 @@ def get_args():
         default='http://localhost:23333/emu1',
         help='Base URL of the Android emulator gateway.',
     )
+    parser.add_argument(
+      '--no_guidance',
+      action='store_true',
+      help='Whether to add guidance to the prompt.'
+    )
 
     return parser.parse_args()
 
@@ -249,6 +254,7 @@ def build_agent(client, model_name, temperature, base_url):
         return seeact_v_guilibra.SeeAct_V(
             client,
             infer.Gpt4Wrapper(model_name, temperature=temperature, base_url=base_url),
+            no_guidance=args.no_guidance
         )
     elif 'qwen' in model_name.lower():
         if 'step-summary' in model_name.lower():

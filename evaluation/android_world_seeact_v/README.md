@@ -130,6 +130,11 @@ HOSTS=($HOST1)
 
 The script automatically generates emulator URLs (`/emu1` through `/emu15`) from the host addresses.
 
+> [!NOTE]
+> **GUI-Libra-3B:** When evaluating the 3B model, use the `--no_guidance` flag. Smaller models tend to perform worse with long guidance that was not seen during training. If you observe unstable results with `GUI-Libra/GUI-Libra-3B`, try `Ray2333/GUI-Libra-3B` instead—both refer to the same model with identical parameters, but we found the latter to be more stable and achieve slightly higher scores in our evaluations.
+>
+> **Evaluation variance:** AndroidWorld results can vary across runs due to environment and emulator non-determinism. We report the **average of two runs** in our paper. Full evaluation logs (see the `logs_GUILibra` directory) show slightly higher scores: GUI-Libra-3B (26.9%), GUI-Libra-7B (31.3%), GUI-Libra-4B (43.5%), GUI-Libra-8B (43.5%).
+
 ### Run
 
 ```bash

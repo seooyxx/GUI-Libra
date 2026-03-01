@@ -345,6 +345,7 @@ class SeeAct_V(EnvironmentInteractingAgent):
             wait_after_action_seconds: float = 2.0,
             file_logger=None,
             save_img_dir: str = './save_img',
+            no_guidance: bool = False,
     ):
         """Initializes a M3A Agent.
 
@@ -362,7 +363,7 @@ class SeeAct_V(EnvironmentInteractingAgent):
         self.wait_after_action_seconds = wait_after_action_seconds
         self.file_logger = file_logger
         self._save_img_dir = save_img_dir
-
+        self.no_guidance = no_guidance
 
     def array_to_jpeg_bytes(image: np.ndarray) -> bytes:
         """Converts a numpy array into a byte string for a JPEG image."""
@@ -413,24 +414,16 @@ class SeeAct_V(EnvironmentInteractingAgent):
         step_data['before_screenshot_with_som'] = before_screenshot.copy()
         b64 = self.llm.encode_image(step_data['raw_screenshot'])
 
-        # history = "".join(
-        #     f"\nStep {i+1}\nThought: {his['action_reason']} \nAction: {his['action']}\n" for i, his in enumerate(self.history)
-        # )
+
         history = "".join(
             f"\nStep {i+1} Action: {his['action']} {'Summary: ' + his['summary'] if ('summary' in his and his['summary'] != None) else ''}\n" for i, his in enumerate(self.history)
         )
-        # only keep the last step summary in history
-        # history = "".join(
-        #     f"\nStep {i+1} Action: {his['action']}\n" for i, his in enumerate(self.history)
-        # )
-        # history += f"Feedback: {self.history[-1]['summary']}" if (len(self.history) > 0 and 'summary' in self.history[-1] and self.history[-1]['summary']) else ''
-
-        # if 'Feedback' in history:
-        #     print('Current History with Feedback: ' + history)
 
         img_size_string = '(original image size {}x{})'.format(before_screenshot.shape[1], before_screenshot.shape[0])
         ########## add guidance ##########
-        query = question_description.format(img_size_string, goal, history) + GUIDANCE
+        query = question_description.format(img_size_string, goal, history)
+        if not self.no_guidance:
+            query = query + GUIDANCE
 
 
         if 'qwen3' in self.llm.model.lower() or 'gui-libra-4b' in self.llm.model.lower() or 'gui-libra-8b' in self.llm.model.lower():
