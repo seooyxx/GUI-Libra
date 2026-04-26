@@ -21,14 +21,14 @@
 {"task_id": "79f0bd7df6e685f30f20025cc6755c0a_110325", "task": "Show me the list of external hard drives for Mac with a capacity greater than 2TB on Micro Center, sorted by price from lowest to highest.", "start_url": "https://www.microcenter.com/"}
 {"task_id": "6ebde509dca8f15c0fa1bd74f071e8d6", "task": "Search for a job in Miami, Florida, in Human Resources on target.", "start_url": "https://www.target.com/"}
 {"task_id": "34ccd15a8ea8fd3895af83f5ccf62369", "task": "Find out what to do when I lose an item on a bus on us.megabus.", "start_url": "https://us.megabus.com/"}
-{"task_id": "c698ff3fc0f6cbce39947c597ab5749b", "task": "Browse the page with event planning tips on Eventbrite.", "start_url": "https://www.eventbrite.com/"}
+{"task_id": "c698ff3fc0f6cbce39947c597ab5749b_121425", "task": "Help me find a list of school activity events in New York for this month.", "start_url": "https://www.eventbrite.com/"}
 {"task_id": "b6d10e9bd19b4009a02dea0e98f4e1ae", "task": "Check the current standings for MLS on Fox Sports.", "start_url": "https://www.foxsports.com/"}
 {"task_id": "d71be72aa25c3eab8eea47a0e60382e2", "task": "Find technical specs for the latest Macbook Air on Apple.", "start_url": "https://www.apple.com/"}
 {"task_id": "0b51b4fa0295ae80ccd176ebdad6fff6", "task": "Search for a red Toyota Corolla from model years 2018 to 2023 on CarMax.", "start_url": "https://www.carmax.com/"}
 {"task_id": "3f312ae3efc3c3e90ababe050dd4e7ae", "task": "Find the current NFL standings for the AFC East division on NFL.com and go to the page on which team is in first place.", "start_url": "https://www.nfl.com/"}
 {"task_id": "95cad96f2e43f3c0d8efad1331c77c8c", "task": "View the list of the Most Popular TV on rotten tomatoes.", "start_url": "https://www.rottentomatoes.com/"}
 {"task_id": "bf3b311cc8dce16d3de844f4b5875dfd", "task": "Compare Apple watches and  learn more about the ultra version on apple.", "start_url": "https://www.apple.com/"}
-{"task_id": "b64f938af842f6a1b4489d0e49a785a7", "task": "Get the frozen vegan cheese pizza between 5 to 10 USD on Target.", "start_url": "https://www.target.com/"}
+{"task_id": "b64f938af842f6a1b4489d0e49a785a7_121125", "task": "Get the frozen vegetarian cheese pizza between 5 to 10 USD on Target.", "start_url": "https://www.target.com/"}
 {"task_id": "5e1b8254c123c80178cc28e0afdb14f0_110325", "task": "Find a help page about “how presale works” on ticketmaster.", "start_url": "https://ticketmaster.com/"}
 {"task_id": "f27c0a7b8b0bb33d37698dff227fc8d7", "task": "Browse used Mercedes-Benz cars from model years 2004 to 2012 on KBB and sort by highest price.", "start_url": "https://www.kbb.com/"}
 {"task_id": "8fdec8eeffd3491e6526cc78c028120b", "task": "See Nissan and Honda cars for sale near Kentwood, MI 49512 on CarMax.", "start_url": "https://www.carmax.com/"}
@@ -92,7 +92,7 @@
 {"task_id": "c03ee2be3d73556ab789c0ad1cbd3451", "task": "Find a dog groomer for nail trimming within 100 miles of zip code 10005 and check the detailed service prices of the first one.", "start_url": "https://www.akc.org/"}
 {"task_id": "05483c50cc9b04c8ac44c574758fb2bd", "task": "Look for the best rated BBB accredited charity near 12023.", "start_url": "https://www.bbb.org/"}
 {"task_id": "a172a5d9ffaf5ef02bd550ec4fe24e6d", "task": "Browse the natural products database.", "start_url": "https://www.drugs.com/"}
-{"task_id": "7e1047f4803237f319c004f7a7f6bccb", "task": "Discover the trade-in value of my Intel 7th generation i3 Windows 10, HP laptop in fair condition,  which has 8 GB memory and can be powered on, proceed for the in-store trade-in.", "start_url": "https://www.bestbuy.com/"}
+{"task_id": "7e1047f4803237f319c004f7a7f6bccb_121125", "task": "Discover the trade-in value of my Intel 10th generation i5, 2021, HP laptop in fair condition, which has 8 GB memory and can be powered on, proceed for the in-store trade-in.", "start_url": "https://www.bestbuy.com/"}
 {"task_id": "f2be37a9a60fbc25b6b11cf622d17352_110325", "task": "Find obedience trials in the state of New York in the next month.", "start_url": "https://www.akc.org/"}
 {"task_id": "e24662008c3be5d56f986f232fcec447", "task": "Find the stock price for WWE over the last month.", "start_url": "https://www.google.com/finance/"}
 {"task_id": "0170ca95038b05fa58d463fe627ac605", "task": "Check if a visa is required to work in the UK for longer than 6 months in Healthcare as an American citizen.", "start_url": "https://www.gov.uk/"}
@@ -104,7 +104,7 @@
 {"task_id": "9ef1a8972f375db59c0e6329e11b7939", "task": "Find Farms land in Wilkes County, NC with the lowest price.", "start_url": "https://www.landwatch.com/"}
 {"task_id": "a11ecdff735b51372d536c866011af6f", "task": "Explore courses related to Psychology.", "start_url": "https://www.coursera.org/"}
 {"task_id": "7fff82864f21ddeccf4104a220892824", "task": "Find the lowest 27\"-32\" Samsung or LG computer monitors nearby which have 4k, IPS display.", "start_url": "https://www.google.com/shopping?udm=28"}
-{"task_id": "50d91eabde542906937ab4c5b6f8f23a", "task": "Calculate Pregnancy Weight Gain for a 5-week pregnancy with a 169lb weight before pregnancy and a 175lb after pregnancy with a 5.6ft height.", "start_url": "https://www.babycenter.com/"}
+{"task_id": "50d91eabde542906937ab4c5b6f8f23a_121425", "task": "My baby boy was born on Dec 1, 2025. His weight is 7 lb 8 oz, height is 20 inches, and head circumference is 35 cm. The measurement date is Dec 1, 2025. Can you calculate his growth percentiles using a calculator?", "start_url": "https://www.babycenter.com/"}
 {"task_id": "dcd26e662a616d373ddd339747c6ce5b", "task": "Take a weight management quiz to find a motivating article for a non-exercising, mostly eating out and can't control portions and cravings, and who has a strong support system, enjoys traveling, loves family time and cooking.", "start_url": "https://www.healthline.com/"}
 {"task_id": "eb2db4b769c145dbe6ba4f74f3e0de98", "task": "Find an energetic hairless dog with medium barking.", "start_url": "https://www.akc.org/"}
 {"task_id": "c0fa2c0e622971955cabf5bcf7b777e8", "task": "Search for rentals in Corning, CA with a maximum price of $1500.", "start_url": "https://www.apartments.com/"}
@@ -145,7 +145,7 @@
 {"task_id": "987bad7c6d4726d64232a8a1c3386888", "task": "Find the seller info and seller's notes about the used car model 2011 BMW 135 with a max price of $30000.", "start_url": "https://www.cars.com/"}
 {"task_id": "15be05973fba714e490cd9c884e4f072", "task": "Find the procedure to get the license for Athletic Trainer.", "start_url": "https://ohio.gov/"}
 {"task_id": "3adeea7627f4343069f38adae40f73d0_110325", "task": "Within 25 Miles of 96817, find a nursing home that accepts medicare.", "start_url": "https://medicare.gov"}
-{"task_id": "c94551d2b18f9ad0ab31b0bd98ca42e3", "task": "Find cats available for adoption within 10 miles of zip code 94587, Young or adult-age cats, sorted by Oldest Addition.", "start_url": "https://www.petfinder.com/"}
+{"task_id": "c94551d2b18f9ad0ab31b0bd98ca42e3_121125", "task": "Find cats available for adoption within 25 miles of zip code 94587, Young or adult-age cats, sorted by Oldest Addition.", "start_url": "https://www.petfinder.com/"}
 {"task_id": "4e801ba102dfaf22c7cf7a126b107609", "task": "Find Linux platform software developers in 10080 who master the Python language and Java language with web interface project type.", "start_url": "https://www.thumbtack.com/"}
 {"task_id": "39c388cdc468688c8139cc2bb5157c13", "task": "Calculate the estimated car loan payment amount for an average credit-rated person for a 15,000-dollar car with a down payment of 2000 dollars and loan tenure of 48 months in zip 65215 and shop for the lowest-priced car.", "start_url": "https://www.cars.com/"}
 {"task_id": "c8d7f2aa7eb5dd074c48c9f76f8659ad", "task": "Show Teen Driver Safety program information.", "start_url": "https://www.dmv.virginia.gov/"}
@@ -185,7 +185,7 @@
 {"task_id": "4e3f6a538cc1f7321cfc50260db9545d", "task": "Look up the current temperature for zip code 10019.", "start_url": "https://www.theweathernetwork.com/"}
 {"task_id": "f00e7accfb4a5e09680bdb326e6274ad", "task": "Check the hourly forecast for Boston.", "start_url": "https://www.accuweather.com/"}
 {"task_id": "6174e5ddd40cfbdc33ee1502f40bac39", "task": "Find a day-use park that offers horseback riding near Nashville.", "start_url": "https://www.recreation.gov/"}
-{"task_id": "547f5729c59d5d12a457a3ebb74c31c6", "task": "Search for 3 bedroom condos with 2 bathrooms within $1500- $2500 range in NYC.", "start_url": "https://www.apartments.com/"}
+{"task_id": "547f5729c59d5d12a457a3ebb74c31c6_010226", "task": "Search for 3 bedroom condos with 2+ bathrooms within $1500- $2500 range in NYC.", "start_url": "https://www.apartments.com/"}
 {"task_id": "0b2623e9fa5cea997f76490bcbc5220f", "task": "Find a list of shorthaired dogs available for adoption within 100 miles of zip code 94587 that are good with kids and cats, and have been on Petfinder for over 30 days.", "start_url": "https://www.petfinder.com/"}
 {"task_id": "3ae28b3c440efe87dc700480b78ac608", "task": "Find the closest 5-star rated dentist to zip code 98011.", "start_url": "https://www.healthgrades.com/"}
 {"task_id": "0632e496d37badee0350dad358f047c5", "task": "Browse recipes for gluten-free chocolate chip cookies that can be made without nuts.", "start_url": "https://cookpad.com/"}
@@ -213,7 +213,7 @@
 {"task_id": "64345c365f544375357c7b67917f08a0_110325", "task": "Find me the most viewed refridgerator that is 34-36 inches wide, with stainless steel finish, and has a customer review rating of 4 stars or higher", "start_url": "https://www.us-appliance.com/"}
 {"task_id": "ab6ee3b83aab6cd283320f5e01003cff", "task": "Find the tech specs of the MacBook Pro 16-inch introduced in November 2023.", "start_url": "https://www.apple.com/"}
 {"task_id": "33bd2cdcea4fcc42a09a8a1e4e5841c6_110325", "task": "Add a Box Combo to my bag with Diet Coke as the drink, and a Kids Combo with milk as the drink. Select the store closest to ZIP 10001 for pickup tomorrow at 12:00 PM.", "start_url": "https://raisingcanes.com/"}
-{"task_id": "47186fac8e7c7277af01144644eb4e0b", "task": "What is the ownership cost of the first car in the list \"top buys 2025\"?", "start_url": "https://www.parkers.co.uk/"}
+{"task_id": "47186fac8e7c7277af01144644eb4e0b_121125", "task": "What is the ownership cost of the first car in the list \"top buys\"?", "start_url": "https://www.parkers.co.uk/"}
 {"task_id": "fa9adb815b85d259f943d81874a052e5", "task": "Browse a user homepage that reposted the top song from the Top 50 Rock chart.", "start_url": "https://soundcloud.com/"}
 {"task_id": "b922508886ded315c9835457a6eb43ea", "task": "Browse tenured/tenure-track faculty positions in Computer Sciences & Technology in California.", "start_url": "https://jobs.chronicle.com"}
 {"task_id": "5d542a7ec1fa142ba73cc87d970caf39", "task": "Find the most cited publication at the 2022 CVPR main conference.", "start_url": "https://dblp.org/"}
@@ -224,13 +224,13 @@
 {"task_id": "78f397336b6fd1cbba0127db7a8cd502", "task": "Browse the upcoming SuperBike events taking place in Italy.", "start_url": "https://www.redbull.com/"}
 {"task_id": "3dca7cbe7d086619d837ff9f5312cebc_110325", "task": "Can you show me products under the category path 'zara home' -> 'rug', with an additional filter for the color beige?", "start_url": "https://zara.com/us"}
 {"task_id": "b962927dfe03bf2274a54381127ed433", "task": "Find the best-selling vinyl record by an artist from New York City in the classical music genre.", "start_url": "https://bandcamp.com/"}
-{"task_id": "78baf9dbe7c3532f7d7ef4cc22a7f065", "task": "Find the most popular digital trends report in the Finance & Insurance industry within the region of China.", "start_url": "https://www.statista.com/"}
+{"task_id": "78baf9dbe7c3532f7d7ef4cc22a7f065_121125", "task": "Find the newest digital trends report in the Finance & Insurance industry within the region of China.", "start_url": "https://www.statista.com/"}
 {"task_id": "c7c07ec10c668625a21ba64165d719bb", "task": "Find the total monthly price for four prepaid unlimited lines without autopay discounts.", "start_url": "https://www.verizon.com/"}
 {"task_id": "512fd4deab099b8dc0dcfc0ec48a3c63", "task": "Identify the open issue with the most comments in the first trending open-source repository this week.", "start_url": "https://github.com/"}
 {"task_id": "d9d8b7d84a3f8d057e368254fe8d65e2", "task": "Find the first commit submitted by NielsRogge to the official repository of the SAM2 model.", "start_url": "https://github.com/"}
 {"task_id": "157f4a79d55e8fa3fd55ba772ba40fbc", "task": "Find the most popular blue Lilo & Stitch toys.", "start_url": "https://www.disney.com/"}
 {"task_id": "62c8d970b3d13891f355911e5a8f4030", "task": "Find the top game listed in the Steam Deck's top-played list over the past year. Then, browse reviews for that game from players who have played over 100 hours and primarily use a Steam Deck.", "start_url": "https://store.steampowered.com/"}
-{"task_id": "11857213ca01510f12813740afd59918_110325", "task": "Add the most top-selling Birkenstock's men clogs in brown, size 10-10.5 to my cart.", "start_url": "https://www.birkenstocks.com/"}
+{"task_id": "11857213ca01510f12813740afd59918_110325", "task": "Add the most top-selling Birkenstock's men clogs in brown, size 10-10.5 to my cart.", "start_url": "https://www.birkenstock.com/"}
 {"task_id": "47bfe8a7e0e4e7efc837287b407fbe90", "task": "Compare the first and second most popular smartphones manufactured by Xiaomi and show the comparison chart.", "start_url": "https://versus.com/"}
 {"task_id": "bb314cb80f0f8489135cbf59074d11e2", "task": "Open the page for the first Best Paper Award video recording of talks from ICLR 2016.", "start_url": "https://iclr.cc/"}
 {"task_id": "1aeca99e6a60b0e3aefb3ef212bdce79", "task": "Find full-time legal occupation jobs in San Diego County with a minimum salary of $4,000+ per month.", "start_url": "https://www.ca.gov/"}
