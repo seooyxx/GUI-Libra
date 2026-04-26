@@ -32,6 +32,7 @@ from ...utils import torch_functional as VF
 from ...utils.py_functional import append_to_dict
 from ...utils.seqlen_balancing import prepare_dynamic_batch, restore_dynamic_batch
 from ...utils.ulysses import gather_outputs_and_unpad, ulysses_pad_and_slice_inputs
+from ..lara_gui_latent import get_thinking_token_id, prepare_latent_inputs_embeds
 from .base import BasePPOActor
 from .config import ActorConfig
 
@@ -51,6 +52,7 @@ class DataParallelPPOActor(BasePPOActor):
         config: ActorConfig,
         actor_module: nn.Module,
         actor_optimizer: Optional[torch.optim.Optimizer] = None,
+        tokenizer: Optional[Any] = None,
     ):
         """
         When optimizer is None, it is Reference Policy
@@ -60,10 +62,14 @@ class DataParallelPPOActor(BasePPOActor):
         self.world_size = int(os.getenv("WORLD_SIZE", "1"))
         self.actor_module = actor_module
         self.actor_optimizer = actor_optimizer
+        self.tokenizer = tokenizer
         if config.use_torch_compile:
             self.log_probs_from_logits = torch.compile(VF.log_probs_from_logits, dynamic=True)
         else:
             self.log_probs_from_logits = VF.log_probs_from_logits
+        self.thinking_token_id = None
+        if self.config.latent_feedback and self.tokenizer is not None:
+            self.thinking_token_id = get_thinking_token_id(self.tokenizer, self.config.latent_thinking_token)
 
     def _forward_micro_batch(self, micro_batch: dict[str, torch.Tensor], temperature: float) -> torch.Tensor:
         """
@@ -86,7 +92,14 @@ class DataParallelPPOActor(BasePPOActor):
         else:
             multi_modal_inputs = {}
 
-        if self.config.padding_free:
+        if self.config.latent_feedback and self.thinking_token_id is None:
+            tokenizer = self.tokenizer or getattr(self.actor_module, "tokenizer", None)
+            if tokenizer is None and hasattr(self.actor_module, "module"):
+                tokenizer = getattr(self.actor_module.module, "tokenizer", None)
+            if tokenizer is not None:
+                self.thinking_token_id = get_thinking_token_id(tokenizer, self.config.latent_thinking_token)
+
+        if self.config.padding_free and not self.config.latent_feedback:
             input_ids_rmpad, indices, *_ = unpad_input(input_ids.unsqueeze(-1), attention_mask)  # (total_nnz, 1)
             input_ids_rmpad = input_ids_rmpad.transpose(0, 1)  # (1, total_nnz)
 
@@ -140,13 +153,49 @@ class DataParallelPPOActor(BasePPOActor):
             )
             log_probs = full_log_probs.squeeze(-1)[:, -response_length - 1 : -1]  # (bsz, response_length)
         else:
-            output = self.actor_module(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                position_ids=position_ids,
-                **multi_modal_inputs,
-                use_cache=False,
-            )
+            if self.config.latent_feedback:
+                thinking_token_id = self.thinking_token_id
+                if thinking_token_id is None:
+                    # The worker attaches tokenizer-derived IDs on construction.
+                    thinking_token_id = getattr(self.actor_module, "thinking_token_id", None)
+                    if thinking_token_id is None and hasattr(self.actor_module, "module"):
+                        thinking_token_id = getattr(self.actor_module.module, "thinking_token_id", None)
+                if thinking_token_id is None:
+                    raise RuntimeError(
+                        "LaRA-GUI latent_feedback is enabled, but thinking_token_id was not initialized."
+                    )
+                inputs_embeds, _ = prepare_latent_inputs_embeds(
+                    self.actor_module,
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    position_ids=position_ids,
+                    thinking_token_id=int(thinking_token_id),
+                    **multi_modal_inputs,
+                )
+                if inputs_embeds is not None:
+                    output = self.actor_module(
+                        inputs_embeds=inputs_embeds,
+                        attention_mask=attention_mask,
+                        position_ids=position_ids,
+                        **multi_modal_inputs,
+                        use_cache=False,
+                    )
+                else:
+                    output = self.actor_module(
+                        input_ids=input_ids,
+                        attention_mask=attention_mask,
+                        position_ids=position_ids,
+                        **multi_modal_inputs,
+                        use_cache=False,
+                    )
+            else:
+                output = self.actor_module(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    position_ids=position_ids,
+                    **multi_modal_inputs,
+                    use_cache=False,
+                )
             logits: torch.Tensor = output.logits
             logits.div_(temperature)
             logits = logits[:, -response_length - 1 : -1, :]  # (bsz, response_length, vocab_size)

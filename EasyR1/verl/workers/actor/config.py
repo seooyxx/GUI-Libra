@@ -104,6 +104,10 @@ class ActorConfig:
     """ulysses sequence parallel size"""
     use_torch_compile: bool = True
     """enable torch compile"""
+    latent_feedback: bool = False
+    """LaRA-GUI: compute answer-token logprobs conditioned on latent thinking feedback."""
+    latent_thinking_token: str = "<|thinking|>"
+    """LaRA-GUI latent token whose embedding is replaced by preceding hidden state."""
     model: ModelConfig = field(default_factory=ModelConfig)
     optim: OptimConfig = field(default_factory=OptimConfig)
     fsdp: FSDPConfig = field(default_factory=FSDPConfig)
@@ -133,3 +137,5 @@ class RefConfig:
     dynamic_batching: bool = field(default=False, init=False)
     ulysses_size: int = field(default=1, init=False)
     use_torch_compile: bool = field(default=True, init=False)
+    latent_feedback: bool = field(default=False, init=False)
+    latent_thinking_token: str = field(default="<|thinking|>", init=False)

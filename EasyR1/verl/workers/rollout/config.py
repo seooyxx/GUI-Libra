@@ -38,6 +38,10 @@ class RolloutConfig:
     max_num_batched_tokens: int = 8192 + 2048
     disable_log_stats: bool = True
     disable_tqdm: bool = False
+    latent_feedback: bool = False
+    """LaRA-GUI: use Torch rollout with latent-feedback instead of plain vLLM generation."""
+    latent_thinking_token: str = "<|thinking|>"
+    """LaRA-GUI latent token whose embedding is replaced by preceding hidden state."""
     val_override_config: dict[str, Any] = field(default_factory=dict)
     # below are auto keys
     prompt_length: int = field(default=-1, init=False)

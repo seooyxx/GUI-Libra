@@ -52,3 +52,5 @@ class WorkerConfig:
         self.ref.ulysses_size = self.actor.ulysses_size
         self.ref.use_torch_compile = self.actor.use_torch_compile
         self.rollout.use_action_weight = self.actor.use_action_weight
+        self.ref.latent_feedback = self.actor.latent_feedback
+        self.ref.latent_thinking_token = self.actor.latent_thinking_token

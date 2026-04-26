@@ -57,6 +57,7 @@ from ..utils.torch_dtypes import PrecisionType
 from ..utils.torch_functional import AnyPrecisionAdamW, get_constant_schedule_with_warmup
 from .config import ActorConfig, CriticConfig, FSDPConfig, ModelConfig, OptimConfig, WorkerConfig
 from .rollout import vLLMRollout
+from .rollout.lara_gui_torch_rollout import LaRAGUITorchRollout
 from .sharding_manager import FSDPVLLMShardingManager
 from .sharding_manager.fsdp_ulysses import FSDPUlyssesShardingManager
 
@@ -329,6 +330,18 @@ class FSDPWorker(Worker):
                 print_gpu_memory_usage(f"After offload {role} model during init")
 
     def _build_rollout(self) -> None:
+        if self.config.rollout.name == "lara_gui_latent_torch" or self.config.rollout.latent_feedback:
+            if self.config.rollout.tensor_parallel_size != 1:
+                raise ValueError("LaRA-GUI latent Torch rollout requires rollout.tensor_parallel_size=1.")
+            self.rollout = LaRAGUITorchRollout(
+                module=self.fsdp_module,
+                config=self.config.rollout,
+                tokenizer=self.tokenizer,
+            )
+            self.rollout_sharding_manager = None
+            print_gpu_memory_usage("After LaRA-GUI latent torch rollout init")
+            return
+
         tp_size = self.config.rollout.tensor_parallel_size
         dp_size = self.world_size // tp_size
         if self.world_size % tp_size != 0:
@@ -385,6 +398,7 @@ class FSDPWorker(Worker):
                 config=self.config.actor,
                 actor_module=self.fsdp_module,
                 actor_optimizer=self.optimizer,
+                tokenizer=self.tokenizer,
             )
 
         if self._has_critic:
@@ -405,6 +419,7 @@ class FSDPWorker(Worker):
             self.ref_policy = DataParallelPPOActor(
                 config=self.config.ref,
                 actor_module=self.ref_fsdp_module,
+                tokenizer=self.tokenizer,
             )
 
         if self._has_actor or self._has_critic:
@@ -512,11 +527,12 @@ class FSDPWorker(Worker):
             metrics["perf/mfu_actor"] = (
                 estimated_flops * self.config.actor.ppo_epochs / (promised_flops * self.world_size)
             )
+            rollout_freed_bytes = self.rollout_sharding_manager.freed_bytes if self.rollout_sharding_manager else 0
             metrics["perf/max_memory_allocated_gb"] = (
-                torch.cuda.max_memory_allocated() - self.rollout_sharding_manager.freed_bytes
+                torch.cuda.max_memory_allocated() - rollout_freed_bytes
             ) / (1024**3)
             metrics["perf/max_memory_reserved_gb"] = (
-                torch.cuda.max_memory_reserved() - self.rollout_sharding_manager.freed_bytes
+                torch.cuda.max_memory_reserved() - rollout_freed_bytes
             ) / (1024**3)
             metrics["perf/cpu_memory_used_gb"] = psutil.virtual_memory().used / (1024**3)
 
@@ -543,10 +559,14 @@ class FSDPWorker(Worker):
 
     @register(dispatch_mode=Dispatch.ONE_TO_ALL)
     def prepare_rollout_engine(self):
+        if self.rollout_sharding_manager is None:
+            return
         self.rollout_sharding_manager.load_vllm_and_sync_weights()
 
     @register(dispatch_mode=Dispatch.ONE_TO_ALL)
     def release_rollout_engine(self):
+        if self.rollout_sharding_manager is None:
+            return
         self.rollout_sharding_manager.offload_vllm()
 
     @register(dispatch_mode=Dispatch.DP_COMPUTE_PROTO)
@@ -563,9 +583,18 @@ class FSDPWorker(Worker):
         }
         prompts.meta_info.update(meta_info)
 
-        prompts = self.rollout_sharding_manager.preprocess_data(prompts)
-        output = self.rollout.generate_sequences(prompts=prompts)
-        output = self.rollout_sharding_manager.postprocess_data(output)
+        if self.rollout_sharding_manager is None:
+            self._process_multi_modal_inputs(prompts)
+            prompts = prompts.to(torch.cuda.current_device())
+            if self._use_param_offload:
+                load_fsdp_model(self.fsdp_module)
+            output = self.rollout.generate_sequences(prompts=prompts)
+            if self._use_param_offload:
+                offload_fsdp_model(self.fsdp_module)
+        else:
+            prompts = self.rollout_sharding_manager.preprocess_data(prompts)
+            output = self.rollout.generate_sequences(prompts=prompts)
+            output = self.rollout_sharding_manager.postprocess_data(output)
 
         output = output.to("cpu")
         return output
