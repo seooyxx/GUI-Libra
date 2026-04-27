@@ -153,7 +153,6 @@ class LaRAGUITorchRollout(BaseRollout):
                     inputs_embeds=inputs_embeds,
                     attention_mask=cur_attention_mask,
                     position_ids=cur_position_ids,
-                    **multi_modal_inputs,
                     use_cache=False,
                     return_dict=True,
                 )
@@ -258,4 +257,3 @@ class LaRAGUITorchRollout(BaseRollout):
             action_mask = action_mask * response_mask
             grounding_mask = grounding_mask * response_mask
         return {"response_action_mask": action_mask, "response_grounding_mask": grounding_mask}
-

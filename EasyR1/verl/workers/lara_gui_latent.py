@@ -54,11 +54,15 @@ def prepare_latent_inputs_embeds(
     inputs_embeds = embedding_layer(input_ids)
 
     clean_kwargs = dict(model_kwargs)
+    pixel_values = clean_kwargs.pop("pixel_values", None)
+    image_grid_thw = clean_kwargs.pop("image_grid_thw", None)
     for reserved in (
         "input_ids",
         "inputs_embeds",
         "attention_mask",
         "position_ids",
+        "pixel_values",
+        "image_grid_thw",
         "labels",
         "output_hidden_states",
         "return_dict",
@@ -68,18 +72,42 @@ def prepare_latent_inputs_embeds(
     ):
         clean_kwargs.pop(reserved, None)
 
+    first_pass = True
+    base_config = getattr(_unwrap_module(module), "config", None)
+    image_token_id = getattr(base_config, "image_token_id", None)
+
     for latent_pos in latent_positions:
         end = int(latent_pos)
         prefix_kwargs = _slice_model_kwargs(clean_kwargs, end)
-        outputs = module(
-            inputs_embeds=inputs_embeds[:, :end, :],
-            attention_mask=attention_mask[:, :end],
-            position_ids=_slice_position_ids(position_ids, end),
-            output_hidden_states=True,
-            return_dict=True,
-            use_cache=False,
-            **prefix_kwargs,
-        )
+        if first_pass:
+            prefix_input_ids = input_ids[:, :end]
+            has_image_tokens = (
+                image_token_id is not None
+                and pixel_values is not None
+                and bool(prefix_input_ids.eq(int(image_token_id)).any().item())
+            )
+            outputs = module(
+                input_ids=prefix_input_ids,
+                attention_mask=attention_mask[:, :end],
+                position_ids=_slice_position_ids(position_ids, end),
+                pixel_values=pixel_values if has_image_tokens else None,
+                image_grid_thw=image_grid_thw if has_image_tokens else None,
+                output_hidden_states=True,
+                return_dict=True,
+                use_cache=False,
+                **prefix_kwargs,
+            )
+            first_pass = False
+        else:
+            outputs = module(
+                inputs_embeds=inputs_embeds[:, :end, :],
+                attention_mask=attention_mask[:, :end],
+                position_ids=_slice_position_ids(position_ids, end),
+                output_hidden_states=True,
+                return_dict=True,
+                use_cache=False,
+                **prefix_kwargs,
+            )
         hidden = outputs.hidden_states[-1]
         updated = inputs_embeds.clone()
         for batch_idx, positions in enumerate(latent_lists):
@@ -108,4 +136,3 @@ def _slice_model_kwargs(kwargs: dict, end: int) -> dict:
         else:
             out[key] = value
     return out
-

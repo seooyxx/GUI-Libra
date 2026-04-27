@@ -15,6 +15,7 @@
 The main entry point to run the PPO algorithm
 """
 
+import os
 from typing import Literal, Optional, Union, cast
 
 import numpy as np
@@ -198,12 +199,14 @@ class FSDPWorker(Worker):
         else:
             AutoClass = AutoModelForCausalLM
 
+        attn_implementation = os.environ.get("LARA_RL_ATTN_IMPLEMENTATION", "flash_attention_2")
+
         if (not fsdp_config.enable_rank0_init) or self.device_mesh.get_local_rank("fsdp") == 0:
             model = AutoClass.from_pretrained(
                 model_config.model_path,
                 config=self.model_config,
                 torch_dtype=torch_dtype,
-                attn_implementation="flash_attention_2",
+                attn_implementation=attn_implementation,
                 device_map="cpu" if fsdp_config.enable_rank0_init else "cuda",
                 low_cpu_mem_usage=True,
                 trust_remote_code=model_config.trust_remote_code,
@@ -213,7 +216,7 @@ class FSDPWorker(Worker):
                 model = AutoClass.from_config(
                     self.model_config,
                     torch_dtype=torch_dtype,
-                    attn_implementation="flash_attention_2",
+                    attn_implementation=attn_implementation,
                     trust_remote_code=model_config.trust_remote_code,
                 )
 
@@ -460,7 +463,11 @@ class FSDPWorker(Worker):
         if "multi_modal_data" not in data.non_tensor_batch:
             return
 
-        if "uid" in self._cache and not np.all(data.non_tensor_batch["uid"] == self._cache["uid"]):
+        uids = data.non_tensor_batch.get("uid")
+        if uids is None:
+            uids = np.arange(len(data.non_tensor_batch["multi_modal_data"]), dtype=object)
+
+        if "uid" in self._cache and not np.all(uids == self._cache["uid"]):
             self._cache.clear()
 
         if "multi_modal_inputs" not in self._cache:
@@ -470,7 +477,7 @@ class FSDPWorker(Worker):
             batch_multi_modal_inputs = []
             multi_modal_inputs_cache = {}  # avoid repeated processing for n > 1 samples
             for index, multi_modal_data in zip(
-                data.non_tensor_batch["uid"], data.non_tensor_batch["multi_modal_data"]
+                uids, data.non_tensor_batch["multi_modal_data"]
             ):  # process multi modal data per sample
                 if index not in multi_modal_inputs_cache:
                     images, videos = [], []
@@ -498,7 +505,7 @@ class FSDPWorker(Worker):
 
                 batch_multi_modal_inputs.append(multi_modal_inputs_cache[index])
 
-            self._cache["uid"] = data.non_tensor_batch["uid"]
+            self._cache["uid"] = uids
             self._cache["multi_modal_inputs"] = np.array(batch_multi_modal_inputs, dtype=object)
 
         data.non_tensor_batch["multi_modal_inputs"] = self._cache["multi_modal_inputs"]
