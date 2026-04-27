@@ -31,6 +31,7 @@ import time
 import os
 import random
 import numpy as np
+from datetime import datetime
 from loguru import logger
 from simpleArgParser import parse_args
 from tqdm import tqdm
@@ -389,6 +390,7 @@ class Agent(Explorer):
             task = task_dict['task']
             task_id = task_dict.get('task_id') or task_dict.get('id') or task
             start_url = task_dict.get('start_url', first_start_url)
+            task_start_dt = datetime.now()
 
             if not isinstance(start_url, str) or len(start_url) == 0:
                 raise ValueError(f"Invalid start_url for task={task}")
@@ -401,7 +403,14 @@ class Agent(Explorer):
             crash_count = self._task_crash_counts.get(task_id, 0)
             if crash_count >= MAX_CRASHES_PER_TASK:
                 logger.error(f"Task '{task}' crashed {crash_count} times. Marking as FAILED.")
-                task_status = {'end_reason': f'crashed_{crash_count}_times', 'auto-eval': 'NA'}
+                task_end_dt = datetime.now()
+                task_status = {
+                    'end_reason': f'crashed_{crash_count}_times',
+                    'auto-eval': 'NA',
+                    'task_start_time': task_start_dt.isoformat(),
+                    'task_end_time': task_end_dt.isoformat(),
+                    'duration_seconds': round((task_end_dt - task_start_dt).total_seconds(), 3),
+                }
                 self.mind2web_writer.start_task(
                     task_id=str(task_id), task=task, start_url=start_url,
                     input_image_paths=task_dict.get("input_image_paths"),
@@ -534,6 +543,9 @@ class Agent(Explorer):
                 'max_steps': self.config.max_steps,
                 'end_reason': 'unknown',
                 'auto-eval': 'NA',
+                'task_start_time': task_start_dt.isoformat(),
+                'task_end_time': None,
+                'duration_seconds': None,
             }
 
             if browser_dead:
@@ -547,6 +559,9 @@ class Agent(Explorer):
             else:
                 s = "unknown"
             task_status['end_reason'] = s
+            task_end_dt = datetime.now()
+            task_status['task_end_time'] = task_end_dt.isoformat()
+            task_status['duration_seconds'] = round((task_end_dt - task_start_dt).total_seconds(), 3)
 
             self._finalize_mind2web_task(task_status, high_level_task)
             self.tasks_done_unique[task_id] = task_status
