@@ -20,6 +20,7 @@ from openai import AsyncOpenAI
 from tqdm.asyncio import tqdm  
 import aiofiles
 import random
+import time
 
 SEM_LIMIT = 100
 
@@ -156,7 +157,7 @@ async def process_row(row, sem):
                 ]}
             ]
 
-            response = await get_gpt_response(client, model_name, messages, temperature=args.temperature)
+            response = await get_gpt_response(client, model_name, messages, temperature=args.temperature) or ""
             if random.random() < 0.02:
                 print(response)
             think_match = re.search(r"<think>(.*?)</think>", response, re.DOTALL)
@@ -199,17 +200,48 @@ async def main():
     with open(args.input_file) as f:
         rows = [json.loads(line) for line in f]
 
-    tasks = [asyncio.create_task(process_row(r, sem)) for r in rows]
-    results = []
-    for coro in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
-        results.append(await coro)
+    lock_path = args.output_file + ".lock"
+    while True:
+        if output_is_complete(args.output_file, len(rows)):
+            print(f"Skip – found complete output with {len(rows)} rows at {args.output_file}")
+            return
+        try:
+            fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(fd)
+            break
+        except FileExistsError:
+            print(f"Waiting – another process is writing {args.output_file}")
+            time.sleep(30)
 
-    async with aiofiles.open(args.output_file, "w") as out:
-        for r in results:
-            await out.write(json.dumps(r) + "\n")
+    tmp_output = args.output_file + ".tmp"
+    try:
+        if output_is_complete(args.output_file, len(rows)):
+            print(f"Skip – found complete output with {len(rows)} rows at {args.output_file}")
+            return
+
+        tasks = [asyncio.create_task(process_row(r, sem)) for r in rows]
+        results = []
+        for coro in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
+            results.append(await coro)
+
+        async with aiofiles.open(tmp_output, "w") as out:
+            for r in results:
+                await out.write(json.dumps(r) + "\n")
+        os.replace(tmp_output, args.output_file)
+    finally:
+        if os.path.exists(lock_path):
+            os.remove(lock_path)
+        if os.path.exists(tmp_output):
+            os.remove(tmp_output)
 
     print(f"Done – saved {len(results)} rows to {args.output_file}")
 
+
+def output_is_complete(path, expected_rows):
+    if not os.path.exists(path):
+        return False
+    with open(path) as f:
+        return sum(1 for line in f if line.strip()) == expected_rows
 
 
 if __name__ == "__main__":
@@ -229,6 +261,16 @@ if __name__ == "__main__":
     input_file_path = args.input_file
     output_file_path = args.output_file
     block_image_dir = args.blocks
+    SEM_LIMIT = args.sem_limit
+    base_blocks = os.path.basename(block_image_dir)
+    if not os.path.exists(block_image_dir) and base_blocks.startswith("cross_cross_"):
+        fixed_blocks = os.path.join(
+            os.path.dirname(block_image_dir),
+            base_blocks.replace("cross_cross_", "cross_", 1),
+        )
+        if os.path.exists(fixed_blocks):
+            print(f"Using corrected blocks path: {fixed_blocks}")
+            block_image_dir = fixed_blocks
     model_name = args.model
 
     client = AsyncOpenAI(

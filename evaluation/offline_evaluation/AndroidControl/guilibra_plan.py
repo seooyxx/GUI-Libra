@@ -20,6 +20,7 @@ from openai import AsyncOpenAI
 from tqdm.asyncio import tqdm  
 import aiofiles
 import random
+import time
 SEM_LIMIT = 100
 
 system_prompt = "You are a GUI agent. You are given a task and a screenshot of the screen. You need to perform a series of actions to complete the task. You need to choose actions from the the following list:" + """
@@ -189,17 +190,48 @@ async def main():
     with open(args.input_file, 'r') as f:
         rows = json.load(f) 
 
-    tasks = [asyncio.create_task(process_row(r, sem)) for r in rows]
-    results = []
-    for coro in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
-        results.append(await coro)
+    lock_path = args.output_file + ".lock"
+    while True:
+        if output_is_complete(args.output_file, len(rows)):
+            print(f"Skip – found complete output with {len(rows)} rows at {args.output_file}")
+            return
+        try:
+            fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(fd)
+            break
+        except FileExistsError:
+            print(f"Waiting – another process is writing {args.output_file}")
+            time.sleep(30)
 
-    async with aiofiles.open(args.output_file, "w") as out:
-        for r in results:
-            await out.write(json.dumps(r) + "\n")
+    tmp_output = args.output_file + ".tmp"
+    try:
+        if output_is_complete(args.output_file, len(rows)):
+            print(f"Skip – found complete output with {len(rows)} rows at {args.output_file}")
+            return
+
+        tasks = [asyncio.create_task(process_row(r, sem)) for r in rows]
+        results = []
+        for coro in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
+            results.append(await coro)
+
+        async with aiofiles.open(tmp_output, "w") as out:
+            for r in results:
+                await out.write(json.dumps(r) + "\n")
+        os.replace(tmp_output, args.output_file)
+    finally:
+        if os.path.exists(lock_path):
+            os.remove(lock_path)
+        if os.path.exists(tmp_output):
+            os.remove(tmp_output)
 
     print(f"Done – saved {len(results)} rows to {args.output_file}")
 
+
+def output_is_complete(path, expected_rows):
+    if not os.path.exists(path):
+        return False
+    with open(path) as f:
+        return sum(1 for line in f if line.strip()) == expected_rows
 
 
 if __name__ == "__main__":
